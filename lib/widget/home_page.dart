@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:weather_now/model/forecast_request.dart';
 import 'dart:convert';
 
@@ -16,7 +17,7 @@ class _HomePageState extends State<HomePage> {
 
 //  int _counter = 0;
 
-  final String darkSkyApi = 'https://api.darksky.net/forecast/24e1c66bc691f3a64110e0a141d3e70f/37.8267,-122.4233?exclude=flags,alerts,daily,hourly,minutely&units=si';
+  final String darkSkyApi = 'https://api.darksky.net/forecast/24e1c66bc691f3a64110e0a141d3e70f/37.8267,-122.4233?exclude=flags,alerts,daily,minutely&units=si';
 
   Future<ForecastRequest> fetchPost() async {
     final response = await http.get(darkSkyApi);
@@ -30,6 +31,11 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  String getTime(int index) {
+    DateTime time = new DateTime.now().add(new Duration(hours: index));
+    return new DateFormat('jm').format(time);
+  }
+
   FutureBuilder<ForecastRequest> getTemperatureWidget() {
     return FutureBuilder<ForecastRequest>(
       future: fetchPost(),
@@ -39,17 +45,41 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(
-                "${snapshot.data.summary}",
+                "${snapshot.data.current.summary}",
                 style: Theme.of(context).textTheme.display1,
               ),
               Text(
-                "${snapshot.data.temperature.toString()}°C",
+                "${snapshot.data.current.temperature.toString()}°C",
                 style: Theme.of(context).textTheme.display2,
               ),
               Text(
-                "${snapshot.data.windSpeed}km/hour windspeed",
+                "${snapshot.data.current.windSpeed}km/h winds",
                 style: Theme.of(context).textTheme.body1,
               ),
+              Container(
+                  margin: EdgeInsets.symmetric(vertical: 20.0),
+                  height: 200.0,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 12,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                            decoration: new BoxDecoration(color: Colors.grey),
+                            child: Padding(
+                                padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                child: Column(
+                                    children: <Widget>[
+                                      Text(getTime(index)),
+                                      Text(snapshot.data.hourly[index].summary),
+                                      Text("${snapshot.data.hourly[index].temperature}°C"),
+                                      Text("${snapshot.data.hourly[index].windSpeed}km/h"),
+                                    ]
+                                )
+                            )
+                        );
+                      }
+                  )
+              )
             ]
           );
         } else if (snapshot.hasError) {
@@ -72,8 +102,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding:
-              EdgeInsets.fromLTRB(15, 15, 15, 25),
+              padding: EdgeInsets.fromLTRB(15, 15, 15, 25),
               child: TextFormField(
                 decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -82,8 +111,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Padding(
-              padding:
-              EdgeInsets.fromLTRB(15, 15, 15, 15),
+              padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
               child: Text(
                 "Current Temperature in Los Angeles, CA",
                 style: Theme.of(context).textTheme.body1,
