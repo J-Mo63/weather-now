@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:weather_now/model/forecast_request.dart';
 import 'dart:convert';
 
 class HomePage extends StatefulWidget {
@@ -13,7 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  int _counter = 0;
+//  int _counter = 0;
 
   final String darkSkyApi = 'https://api.darksky.net/forecast/24e1c66bc691f3a64110e0a141d3e70f/37.8267,-122.4233?exclude=flags,alerts,daily,hourly,minutely&units=si';
 
@@ -34,9 +35,22 @@ class _HomePageState extends State<HomePage> {
       future: fetchPost(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Text(
-            "${snapshot.data.temperature.toString()}°C",
-            style: Theme.of(context).textTheme.display1,
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "${snapshot.data.summary}",
+                style: Theme.of(context).textTheme.display1,
+              ),
+              Text(
+                "${snapshot.data.temperature.toString()}°C",
+                style: Theme.of(context).textTheme.display2,
+              ),
+              Text(
+                "${snapshot.data.windSpeed}km/hour windspeed",
+                style: Theme.of(context).textTheme.body1,
+              ),
+            ]
           );
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
@@ -59,7 +73,7 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             Padding(
               padding:
-              EdgeInsets.fromLTRB(16, 16, 16, 36),
+              EdgeInsets.fromLTRB(15, 15, 15, 25),
               child: TextFormField(
                 decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -69,7 +83,7 @@ class _HomePageState extends State<HomePage> {
             ),
             Padding(
               padding:
-              EdgeInsets.fromLTRB(16, 16, 16, 16),
+              EdgeInsets.fromLTRB(15, 15, 15, 15),
               child: Text(
                 "Current Temperature in Los Angeles, CA",
                 style: Theme.of(context).textTheme.body1,
@@ -82,29 +96,12 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
-            _counter++;
+            build(context);
           });
         },
         tooltip: 'Refresh',
         child: Icon(Icons.refresh),
       ),
-    );
-  }
-}
-
-
-class ForecastRequest {
-  final String summary;
-  final double temperature;
-  final double windSpeed;
-
-  ForecastRequest({this.summary, this.temperature, this.windSpeed});
-
-  factory ForecastRequest.fromJson(Map<String, dynamic> json) {
-    return ForecastRequest(
-      summary: json['currently']['summary'],
-      temperature: json['currently']['temperature'].toDouble(),
-      windSpeed: json['currently']['windSpeed'],
     );
   }
 }
