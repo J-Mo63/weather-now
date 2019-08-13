@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
 
 //  int _counter = 0;
 
-  final String darkSkyApi = 'https://api.darksky.net/forecast/24e1c66bc691f3a64110e0a141d3e70f/37.8267,-122.4233?exclude=flags,alerts,daily,minutely&units=si';
+  final String darkSkyApi = 'https://api.darksky.net/forecast/24e1c66bc691f3a64110e0a141d3e70f/37.8267,-122.4233?exclude=flags,alerts,minutely&units=si';
 
   Future<ForecastRequest> fetchPost() async {
     final response = await http.get(darkSkyApi);
