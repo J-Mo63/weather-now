@@ -6,6 +6,7 @@ class ForecastRequest {
 
   factory ForecastRequest.fromJson(Map<String, dynamic> json) {
     List<dynamic> hourlyJson = json['hourly']['data'];
+    List<dynamic> dailyJson = json['daily']['data'];
 
     return ForecastRequest(
       current: Forecast.fromJson(json['currently']),
